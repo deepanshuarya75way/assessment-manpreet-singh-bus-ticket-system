@@ -39,11 +39,9 @@ The system provides separate access for conductors and checkers. Conductors can 
 
 ## Project Structure
 
+```text
 bus-ticket-system/
-│
-├── frontend/        # React frontend application
-│
-├── backend/         # Node.js and Express backend
-│
+├── frontend/
+├── backend/
 ├── package.json
 └── package-lock.json
