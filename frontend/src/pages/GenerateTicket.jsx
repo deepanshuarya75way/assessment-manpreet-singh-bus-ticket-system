@@ -68,9 +68,10 @@ function GenerateTicket() {
         seatNumber: selectedSeat
       };
       const res = await axios.post(
-        "https://127.0.0.1:5000/create-ticket",
+        "http://127.0.0.1:5000/create-ticket",
         ticketData
       )
+      
       const qrCode = res.data.qr;
       setQr(qrCode);
 
