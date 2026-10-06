@@ -1,14 +1,16 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
-const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const QRCode = require("qrcode");
+
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 
 // MongoDB connect
 mongoose.connect(process.env.MONGO_URI)
@@ -39,6 +41,7 @@ const ticketSchema = new mongoose.Schema({
   to: String,
   fare: Number,
   busNo: String,
+  seatNumber: Number,
   time: Date
 });
 
@@ -47,12 +50,20 @@ const Ticket = mongoose.model("Ticket", ticketSchema);
 // ✅ CREATE TICKET (FINAL FIX)
 app.post("/create-ticket", async (req, res) => {
   try {
-    const { from, to, fare, busNo } = req.body;
+    const { from, to, fare, busNo,seatNumber } = req.body;
 
-    if (!from || !to || !fare || !busNo) {
+    if (!from || !to || !fare || !busNo || !seatNumber) {
       return res.status(400).json({ error: "All fields are required" });
     }
-
+    const alreadyBooked = await Ticket.findOne({
+      busNo,
+      seatNumber
+    });
+    if(alreadyBooked){
+      return res.status(400).json({
+        error: "Seat already bookeddd..."
+      })
+    }
     const ticketId = "TKT" + Date.now();
 
     const newTicket = new Ticket({
@@ -61,6 +72,7 @@ app.post("/create-ticket", async (req, res) => {
       to,
       fare,
       busNo,
+      seatNumber,
       time: new Date()
     });
 
